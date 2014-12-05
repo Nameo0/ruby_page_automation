@@ -12,7 +12,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ruby_page_automation@IRB_console__ruby_page_automation.coverage" NAME="IRB console: ruby_page_automation Coverage Results" MODIFIED="1417411294014" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ruby_page_automation" />
+    <SUITE FILE_PATH="coverage/ruby_page_automation@IRB_console__ruby_page_automation.coverage" NAME="IRB console: ruby_page_automation Coverage Results" MODIFIED="1417748471751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ruby_page_automation" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -39,8 +39,8 @@
       <file leaf-file-name="ruby_page_automation.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ruby_page_automation.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.61290324" vertical-offset="75" max-vertical-offset="705">
-              <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.48387095" vertical-offset="195" max-vertical-offset="660">
+              <caret line="28" column="40" selection-start-line="28" selection-start-column="40" selection-end-line="28" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -62,8 +62,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="61" />
-    <option name="y" value="31" />
+    <option name="x" value="40" />
+    <option name="y" value="24" />
     <option name="width" value="1550" />
     <option name="height" value="865" />
   </component>
@@ -271,7 +271,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="61" y="31" width="1550" height="865" extended-state="0" />
+    <frame x="40" y="24" width="1550" height="865" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -332,8 +332,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ruby_page_automation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61290324" vertical-offset="75" max-vertical-offset="705">
-          <caret line="24" column="12" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.48387095" vertical-offset="195" max-vertical-offset="660">
+          <caret line="28" column="40" selection-start-line="28" selection-start-column="40" selection-end-line="28" selection-end-column="40" />
           <folding />
         </state>
       </provider>

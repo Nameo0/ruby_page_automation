@@ -19,24 +19,21 @@ search_form.field_with(:name => "fname").value = "Barack"
 search_results = agent.submit search_form
 
 # Outputs results of the page that is generated after form submission. (tester)
-puts search_results.body
+#puts search_results.body
 
-if search_results.body.include? "60615"
-  puts "lol"
-end
+# Sets the search results page and gets the html code and saves it to a variable as a string
+search_results_body = search_results.slice!(479..search_results_body.length).body.downcase
 
+puts search_results_body.index('<b>obama, barack</b>')
+
+puts search_results_body.index("15256.00")
 =begin
-# Converts the search results page to a string
-search_results_page = search_results.uri.to_s
-# puts search_results.at('b').text.strip
-
-
-# doc = Nokogiri::HTML(open(search_results))
-# puts search_results.respond_to?(:to_uri)
-# puts doc
-
-open(search_results_page) do |f|
-  doc = Nokogiri::HTML(f.read)
-  doc.css('b')[1].content
+b_count = 0
+iteration_counter = 0
+0.step(search_results_body.length, 1) do |a|
+  if search_results_body[a] == "b"
+    b_count = b_count + 1
+  end
+  iteration_counter = iteration_counter + 1
 end
 =end
