@@ -12,8 +12,8 @@ page  = agent.get("http://www.fec.gov/finance/disclosure/norindsea.shtml")
 
 # Searches for a form based on action. Fills in the appropriate fields of the form.
 search_form = page.form_with :action => "http://docquery.fec.gov/cgi-bin/qind/"
-search_form.field_with(:name => "lname").value = "Obama"
-search_form.field_with(:name => "fname").value = "Barack"
+search_form.field_with(:name => "lname").value = "Barack"
+search_form.field_with(:name => "fname").value = "Obama"
 
 # Submits form
 search_results = agent.submit search_form
@@ -22,11 +22,14 @@ search_results = agent.submit search_form
 #puts search_results.body
 
 # Sets the search results page and gets the html code and saves it to a variable as a string
-search_results_body = search_results.slice!(479..search_results_body.length).body.downcase
+search_results_body = search_results.body.downcase
+
+# Cuts out the unneeded junk html code
+search_results_body = search_results_body.slice!(479..(search_results_body.length-212))
 
 puts search_results_body.index('<b>obama, barack</b>')
 
-puts search_results_body.index("15256.00")
+puts search_results_body#.length#.index("15256.00")
 =begin
 b_count = 0
 iteration_counter = 0
