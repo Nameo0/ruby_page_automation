@@ -7,13 +7,18 @@ require 'mechanize'
 require 'nokogiri'
 require 'open-uri'
 
+fname = "Hillary"
+lname = "Clinton"
+non_federal_receipts = Array.new
+contributions_to_political_committees = Array.new
+
 agent = Mechanize.new
 page  = agent.get("http://www.fec.gov/finance/disclosure/norindsea.shtml")
 
 # Searches for a form based on action. Fills in the appropriate fields of the form.
 search_form = page.form_with :action => "http://docquery.fec.gov/cgi-bin/qind/"
-search_form.field_with(:name => "lname").value = "Barack"
-search_form.field_with(:name => "fname").value = "Obama"
+search_form.field_with(:name => "lname").value = "#{lname}"
+search_form.field_with(:name => "fname").value = "#{fname}"
 
 # Submits form
 search_results = agent.submit search_form
@@ -25,18 +30,40 @@ search_results = agent.submit search_form
 search_results_body = search_results.body.downcase
 
 # Cuts out the unneeded junk html code
-search_results_body = search_results_body.slice!(479..(search_results_body.length-212))
+search_results_body = search_results_body.slice!((search_results_body.index("</center>") + 18)..search_results_body.length)
 
-puts search_results_body.index('<b>obama, barack</b>')
+puts search_results_body.index('<b>#{lname}, #{fname}</b>')
 
-puts search_results_body#.length#.index("15256.00")
-=begin
-b_count = 0
-iteration_counter = 0
-0.step(search_results_body.length, 1) do |a|
-  if search_results_body[a] == "b"
-    b_count = b_count + 1
+#puts search_results_body#.length#.index("15256.00")
+
+#while a=0 < search_results_body.length
+  temporary = Hash.new
+#----name
+  search_results_body = search_results_body.slice!((search_results_body.index("</font>") + 18)..search_results_body.length)
+  temporary[:name] = search_results_body.slice!(0..search_results_body.index("</b>") - 1)
+#----to
+  #puts search_results_body.index("<a")
+  search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
+  search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
+  temporary[:to] = search_results_body.slice!(0..(search_results_body.index("</a>") - 1))
+#----via
+  if search_results_body.index("via") < search_results_body.index("<a")
+    search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
+    search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
+    temporary[:via] = search_results_body.slice!(0..(search_results_body.index("</a>") - 1))
   end
-  iteration_counter = iteration_counter + 1
-end
-=end
+# I might have to loop the following three
+#----date
+  search_results_body = search_results_body.slice!((search_results_body.index("</td><td") + 8)..search_results_body.length)
+  temporary[:date] = search_results_body.slice!((search_results_body.index(">") + 1)..(search_results_body.index("</td>") - 1))
+#----amount
+  search_results_body = search_results_body.slice!((search_results_body.index("<td") + 3)..search_results_body.length)
+  temporary[:amount] = search_results_body.slice!((search_results_body.index(">") + 1)..(search_results_body.index("</td>") - 1))
+#----contribute_num (double check what this number means)
+  search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
+  search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
+  temporary[:contribute_num] = search_results_body.slice!(0..(search_results_body.index("</a>") - 1))
+  #puts search_results_body.index("via")
+  #puts search_results_body
+  puts temporary
+#end
