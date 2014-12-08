@@ -7,8 +7,8 @@ require 'mechanize'
 require 'nokogiri'
 require 'open-uri'
 
-fname = "Hillary"
-lname = "Clinton"
+fname = "John"
+lname = "Smith"
 non_federal_receipts = Array.new
 contributions_to_political_committees = Array.new
 
@@ -29,17 +29,22 @@ search_results = agent.submit search_form
 # Sets the search results page and gets the html code and saves it to a variable as a string
 search_results_body = search_results.body.downcase
 
-# Cuts out the unneeded junk html code
-search_results_body = search_results_body.slice!((search_results_body.index("</center>") + 18)..search_results_body.length)
-
 puts search_results_body.index('<b>#{lname}, #{fname}</b>')
 
 #puts search_results_body#.length#.index("15256.00")
+puts search_results_body.index("<font")
 
 #while a=0 < search_results_body.length
   temporary = Hash.new
-#----name
-  search_results_body = search_results_body.slice!((search_results_body.index("</font>") + 18)..search_results_body.length)
+#----type than name
+  if search_results_body.index("<font") == 386 # Checks if "Contributions to Political Committees" is first
+    temporary[:type] = "Contributions to Political Committees"
+    search_results_body = search_results_body.slice!((search_results_body.index("</font>") + 18)..search_results_body.length)
+  elsif search_results_body.index("<font") == 389 # Checks if "Non-Federal Receipts 'Exempt From Limits'" is first
+    temporary[:type] = "Non-Federal Receipts 'Exempt From Limits'"
+    search_results_body = search_results_body.slice!((search_results_body.index("</font>") + 22)..search_results_body.length)
+  else puts "New Category"
+  end
   temporary[:name] = search_results_body.slice!(0..search_results_body.index("</b>") - 1)
 #----to
   #puts search_results_body.index("<a")
