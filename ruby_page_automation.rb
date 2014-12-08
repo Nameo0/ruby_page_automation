@@ -9,6 +9,7 @@ require 'open-uri'
 
 fname = "Hillary"
 lname = "Clinton"
+file_out = "../../Documents/fec_dot_gov.txt" # Route from the script folder
 non_federal_receipts = Array.new
 contributions_to_political_committees = Array.new
 
@@ -74,3 +75,8 @@ search_results_body = search_results.body.downcase
   #puts search_results_body
   puts temporary
 #end
+
+# Outputs the result
+output_file = File.new(file_out, "w+")
+output_file.puts(temporary)
+output_file.close
