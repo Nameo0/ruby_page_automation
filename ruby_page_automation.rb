@@ -7,8 +7,8 @@ require 'mechanize'
 require 'nokogiri'
 require 'open-uri'
 
-fname = "John"
-lname = "Smith"
+fname = "Hillary"
+lname = "Clinton"
 non_federal_receipts = Array.new
 contributions_to_political_committees = Array.new
 
@@ -36,10 +36,20 @@ search_results_body = search_results.body.downcase
     temporary[:type] = "Non-Federal Receipts 'Exempt From Limits'"
     search_results_body = search_results_body.slice!((search_results_body.index("</font>") + 22)..search_results_body.length)
   else puts "New Category"
+      temporary[:type] = "New Category"
   end
   temporary[:name] = search_results_body.slice!(0..search_results_body.index("</b>") - 1)
 #----address
-
+  search_results_body = search_results_body.slice!((search_results_body.index("<br>") + 5)..search_results_body.length)
+  temporary[:address] = search_results_body.slice!(0..(search_results_body.index("<br>") - 1))
+#----address_name
+  #puts search_results_body
+  if search_results_body.index("<br><br>") < 5
+    temporary[:address_name] = "Not Found" # Website has nothing
+  else
+    search_results_body = search_results_body.slice!(5..search_results_body.length)
+    temporary[:address_name] = search_results_body.slice!(0..(search_results_body.index("<br>") - 1))
+  end
 #----to
   search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
   search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
