@@ -23,16 +23,8 @@ search_form.field_with(:name => "fname").value = "#{fname}"
 # Submits form
 search_results = agent.submit search_form
 
-# Outputs results of the page that is generated after form submission. (tester)
-#puts search_results.body
-
-# Sets the search results page and gets the html code and saves it to a variable as a string
+# Sets the search results page and gets the html code and saves it as a string
 search_results_body = search_results.body.downcase
-
-puts search_results_body.index('<b>#{lname}, #{fname}</b>')
-
-#puts search_results_body#.length#.index("15256.00")
-puts search_results_body.index("<font")
 
 #while a=0 < search_results_body.length
   temporary = Hash.new
@@ -46,8 +38,9 @@ puts search_results_body.index("<font")
   else puts "New Category"
   end
   temporary[:name] = search_results_body.slice!(0..search_results_body.index("</b>") - 1)
+#----address
+
 #----to
-  #puts search_results_body.index("<a")
   search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
   search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
   temporary[:to] = search_results_body.slice!(0..(search_results_body.index("</a>") - 1))
@@ -68,7 +61,6 @@ puts search_results_body.index("<font")
   search_results_body = search_results_body.slice!(search_results_body.index("<a")..search_results_body.length)
   search_results_body = search_results_body.slice!((search_results_body.index(">") + 1)..search_results_body.length)
   temporary[:contribute_num] = search_results_body.slice!(0..(search_results_body.index("</a>") - 1))
-  #puts search_results_body.index("via")
   #puts search_results_body
   puts temporary
 #end
