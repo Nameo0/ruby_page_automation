@@ -29,8 +29,8 @@
       <file leaf-file-name="ruby_page_automation.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ruby_page_automation.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8064516" vertical-offset="345" max-vertical-offset="1575">
-              <caret line="48" column="84" selection-start-line="48" selection-start-column="84" selection-end-line="48" selection-end-column="84" />
+            <state vertical-scroll-proportion="0.64772725" vertical-offset="1275" max-vertical-offset="2265">
+              <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -311,7 +311,9 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$USER_HOME$/.rvm/rubies/ruby-2.0.0-p481/lib/ruby/2.0.0/cgi/html.rb">
@@ -332,8 +334,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ruby_page_automation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8064516" vertical-offset="345" max-vertical-offset="1575">
-          <caret line="48" column="84" selection-start-line="48" selection-start-column="84" selection-end-line="48" selection-end-column="84" />
+        <state vertical-scroll-proportion="0.64772725" vertical-offset="1275" max-vertical-offset="2265">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
           <folding />
         </state>
       </provider>
