@@ -147,3 +147,52 @@ output_file.puts(search_results_body_test)
 output_file.close
 =end
 
+gem 'mechanize',  '2.7.3'
+gem 'nokogiri',   '1.6.5'
+
+require 'mechanize'
+require 'nokogiri'
+
+fname = 'Hillary'
+lname = 'Clinton'
+page_file_out = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
+file_out = '../../Documents/fec_dot_gov.txt' # Route from the script folder
+test_file_out = '../..//Documents/test.txt' # Used for testing
+
+agent = Mechanize.new
+page  = agent.get('http://www.fec.gov/finance/disclosure/norindsea.shtml')
+puts page.class
+
+# Searches for a form based on action. Fills in the appropriate fields of the form.
+search_form = page.form_with :action => 'http://docquery.fec.gov/cgi-bin/qind/'
+search_form.field_with(:name => 'lname').value = "#{lname}"
+search_form.field_with(:name => 'fname').value = "#{fname}"
+
+# Submits form
+search_results = agent.submit search_form
+
+# Converts the Mechanize::Page object into a Nokogiri::HTML::Document
+html_doc = Nokogiri::HTML(search_results.body)
+
+puts html_doc.xpath("//a")
+
+=begin
+output_file = File.new(page_file_out, 'w+')
+output_file.puts(html_doc)
+output_file.close
+=end
+
+# Finds the text that is located under b which his located under font
+#search_results_body = html_doc.css("font b")
+
+=begin
+# Outputs the result
+output_file = File.new(file_out, 'w+')
+output_file.puts(hash_array)
+output_file.close
+=end
+
+# Outputs test result
+output_file = File.new(test_file_out, 'w+')
+output_file.puts(html_doc)
+output_file.close
