@@ -153,8 +153,8 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-FNAME = 'Hillary'
-LNAME = 'Clinton'
+FNAME = 'hillary'
+LNAME = 'clinton'
 PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
 FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
 TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
@@ -173,12 +173,31 @@ search_form.field_with(:name => 'fname').value = "#{FNAME}"
 search_results = agent.submit search_form
 
 # Converts the Mechanize::Page object into a Nokogiri::HTML::Document
-html_doc = Nokogiri::HTML(search_results.body)
+html_doc = Nokogiri::HTML(search_results.body.downcase)
+
+temporary = Hash.new # Used to store each cycle of info and gets saved to an array
 
 # Grabs the contribution type.
 # NOTE: //text() will grab the text between the tags.
 contribution_type = html_doc.xpath("//body//b//text()")[1].to_s
-puts contribution_type
+temporary[:type] = contribution_type
+
+# Grabs the name
+if (html_doc.xpath("//body//b//text()")[2].to_s.include? "#{FNAME}") || (html_doc.xpath("//body//b//text()")[2].to_s.include? "#{LNAME}")
+  temporary[:name] = html_doc.xpath("//body//b//text()")[2].to_s
+end
+
+# Grabs the address
+# EX: CITY, ST #####
+address = html_doc.css('br')[8].next.text.strip
+temporary[:address] = address
+
+# Grabs address name
+address_name = html_doc.css('br')[9].next.text.strip
+temporary[:address_name] = address_name
+
+#puts html_doc.xpath("//body//br")
+puts temporary
 
 =begin
 output_file = File.new(page_file_out, 'w+')
