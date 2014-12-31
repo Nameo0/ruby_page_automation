@@ -153,20 +153,21 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-fname = 'Hillary'
-lname = 'Clinton'
-page_file_out = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
-file_out = '../../Documents/fec_dot_gov.txt' # Route from the script folder
-test_file_out = '../..//Documents/test.txt' # Used for testing
+FNAME = 'Hillary'
+LNAME = 'Clinton'
+PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
+FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
+TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
+
+contribution_type = 'No Contribution Yet'
 
 agent = Mechanize.new
 page  = agent.get('http://www.fec.gov/finance/disclosure/norindsea.shtml')
-puts page.class
 
 # Searches for a form based on action. Fills in the appropriate fields of the form.
 search_form = page.form_with :action => 'http://docquery.fec.gov/cgi-bin/qind/'
-search_form.field_with(:name => 'lname').value = "#{lname}"
-search_form.field_with(:name => 'fname').value = "#{fname}"
+search_form.field_with(:name => 'lname').value = "#{LNAME}"
+search_form.field_with(:name => 'fname').value = "#{FNAME}"
 
 # Submits form
 search_results = agent.submit search_form
@@ -174,7 +175,10 @@ search_results = agent.submit search_form
 # Converts the Mechanize::Page object into a Nokogiri::HTML::Document
 html_doc = Nokogiri::HTML(search_results.body)
 
-puts html_doc.xpath("//a")
+# Grabs the contribution type.
+# NOTE: //text() will grab the text between the tags.
+contribution_type = html_doc.xpath("//body//b//text()")[1].to_s
+puts contribution_type
 
 =begin
 output_file = File.new(page_file_out, 'w+')
@@ -193,6 +197,6 @@ output_file.close
 =end
 
 # Outputs test result
-output_file = File.new(test_file_out, 'w+')
+output_file = File.new(TEST_FILE_OUT, 'w+')
 output_file.puts(html_doc)
 output_file.close
