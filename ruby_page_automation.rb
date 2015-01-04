@@ -153,8 +153,8 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-FNAME = 'hillary'
-LNAME = 'clinton'
+FNAME = 'john'
+LNAME = 'smith'
 PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
 FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
 TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
@@ -179,12 +179,12 @@ temporary = Hash.new # Used to store each cycle of info and gets saved to an arr
 
 # Grabs the contribution type.
 # NOTE: //text() will grab the text between the tags.
-contribution_type = html_doc.xpath("//body//b//text()")[1].to_s
+contribution_type = html_doc.xpath("//body/b/text()")[1].to_s
 temporary[:type] = contribution_type
 
 # Grabs the name
-if (html_doc.xpath("//body//b//text()")[2].to_s.include? "#{FNAME}") || (html_doc.xpath("//body//b//text()")[2].to_s.include? "#{LNAME}")
-  temporary[:name] = html_doc.xpath("//body//b//text()")[2].to_s
+if (html_doc.xpath("//body/b/text()")[2].to_s.include? "#{FNAME}") || (html_doc.xpath("/body/b/text()")[2].to_s.include? "#{LNAME}")
+  temporary[:name] = html_doc.xpath("//body/b/text()")[2].to_s
 end
 
 # Grabs the address
@@ -196,7 +196,16 @@ temporary[:address] = address
 address_name = html_doc.css('br')[9].next.text.strip
 temporary[:address_name] = address_name
 
-#puts html_doc.xpath("//body//br")
+# Grabs to who donation and via who (if applicable)
+temporary[:to] = html_doc.xpath("//tr/td/a/text()")[0].to_s
+# The via part
+if html_doc.xpath("//tr/td")[0].children.to_s.include? "<b>via</b>"
+  puts "b"
+  #puts html_doc.xpath("//tr/td")[0].children.to_s
+else
+  puts "no <b>"
+end
+
 puts temporary
 
 =begin
