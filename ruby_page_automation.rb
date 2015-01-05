@@ -153,8 +153,8 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-FNAME = 'john'
-LNAME = 'smith'
+FNAME = 'hillary'
+LNAME = 'clinton'
 PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
 FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
 TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
@@ -200,10 +200,9 @@ temporary[:address_name] = address_name
 temporary[:to] = html_doc.xpath("//tr/td/a/text()")[0].to_s
 # The via part
 if html_doc.xpath("//tr/td")[0].children.to_s.include? "<b>via</b>"
-  puts "b"
-  #puts html_doc.xpath("//tr/td")[0].children.to_s
+  temporary[:via] = html_doc.xpath("//tr/td/a/text()")[1].to_s
 else
-  puts "no <b>"
+  temporary[:via] = "NO VIA"
 end
 
 puts temporary
