@@ -153,13 +153,19 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-FNAME = 'hillary'
-LNAME = 'clinton'
+numberey = 0
+if numberey == 0
+  FNAME = 'hillary'
+  LNAME = 'clinton'
+elsif numberey == 1
+  FNAME = 'john'
+  LNAME = 'smith'
+end
 PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
 FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
 TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
 
-contribution_type = 'No Contribution Yet'
+$contribution_type = 'No Contribution Yet'
 
 agent = Mechanize.new
 page  = agent.get('http://www.fec.gov/finance/disclosure/norindsea.shtml')
@@ -179,13 +185,20 @@ temporary = Hash.new # Used to store each cycle of info and gets saved to an arr
 
 # Grabs the contribution type.
 # NOTE: //text() will grab the text between the tags.
-contribution_type = html_doc.xpath("//body/b/text()")[1].to_s
-temporary[:type] = contribution_type
+if html_doc.css('b/text()')[1].to_s == 'contributions to political committees'
+  contribution_type = html_doc.css('b/text()')[1].to_s
+  temporary[:type] = contribution_type
+elsif html_doc.css('font/text()')[0].to_s == 'non-federal receipts "exempt from limits"'
+  contribution_type = html_doc.css('font/text()')[0].to_s
+  temporary[:type] = contribution_type
+end
+#puts html_doc.css('font')
 
 # Grabs the name
-if (html_doc.xpath("//body/b/text()")[2].to_s.include? "#{FNAME}") || (html_doc.xpath("/body/b/text()")[2].to_s.include? "#{LNAME}")
-  temporary[:name] = html_doc.xpath("//body/b/text()")[2].to_s
+if (html_doc.xpath('//body/b/text()')[1].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[1].to_s.include? "#{LNAME}")
+  temporary[:name] = html_doc.xpath('//body/b/text()')[1].to_s
 end
+puts html_doc.xpath('//body/b/text()')
 
 # Grabs the address
 # EX: CITY, ST #####
@@ -197,24 +210,21 @@ address_name = html_doc.css('br')[9].next.text.strip
 temporary[:address_name] = address_name
 
 # Grabs to who donation and via who (if applicable)
-temporary[:to] = html_doc.xpath("//tr/td/a/text()")[0].to_s
+temporary[:to] = html_doc.xpath('//tr/td/a/text()')[0].to_s
 # The via part
-if html_doc.xpath("//tr/td")[0].children.to_s.include? "<b>via</b>"
-  temporary[:via] = html_doc.xpath("//tr/td/a/text()")[1].to_s
+if html_doc.xpath('//tr/td')[0].children.to_s.include? '<b>via</b>'
+  temporary[:via] = html_doc.xpath('//tr/td/a/text()')[1].to_s
 else
-  temporary[:via] = "NO VIA"
+  temporary[:via] = 'NO VIA'
 end
 
-puts temporary
+#puts temporary
 
 =begin
 output_file = File.new(page_file_out, 'w+')
 output_file.puts(html_doc)
 output_file.close
 =end
-
-# Finds the text that is located under b which his located under font
-#search_results_body = html_doc.css("font b")
 
 =begin
 # Outputs the result
