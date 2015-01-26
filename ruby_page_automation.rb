@@ -182,55 +182,78 @@ search_results = agent.submit search_form
 # Converts the Mechanize::Page object into a Nokogiri::HTML::Document
 html_doc = Nokogiri::HTML(search_results.body.downcase)
 
-temporary = Hash.new # Used to store each cycle of info and gets saved to an array
+temporary_hash = Hash.new # Used to store each cycle of info and gets saved to an array
 
 # Grabs the contribution type.
 # NOTE: //text() will grab the text between the tags.
 if html_doc.css('b/text()')[1].to_s == 'contributions to political committees'
   contribution_type = html_doc.css('b/text()')[1].to_s
-  temporary[:type] = contribution_type
+  temporary_hash[:type] = contribution_type
 elsif html_doc.css('font/text()')[0].to_s == 'non-federal receipts "exempt from limits"'
   contribution_type = html_doc.css('font/text()')[0].to_s
-  temporary[:type] = contribution_type
+  temporary_hash[:type] = contribution_type
 end
 #puts html_doc.css('font')
 
 a = 0
+# Do while the first or last name is present in the selected link area
 while (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[a].to_s.include? "#{LNAME}")
-  temporary = Hash.new
+  if a != 0
+    temporary_hash = Hash.new
+    temporary_hash[:type] = contribution_type
+  end
   # Grabs the name
   if (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[a].to_s.include? "#{LNAME}")
-    temporary[:name] = html_doc.xpath('//body/b/text()')[a].to_s
+    temporary_hash[:name] = html_doc.xpath('//body/b/text()')[a].to_s
   end
 
   # Grabs the address
   # EX: CITY, ST #####
   address = html_doc.xpath('//body/b')[a].next.next.text.strip
-  temporary[:address] = address
+  temporary_hash[:address] = address
 
   # Grabs address name
   if (html_doc.xpath('//body/b')[a].next.next.next.next.text.strip == '') == false
     address_name = html_doc.xpath('//body/b')[a].next.next.next.next.text.strip
-    temporary[:address_name] = address_name
+    temporary_hash[:address_name] = address_name
   else
-    temporary[:address_name] = 'NO ADDRESS NAME'
+    temporary_hash[:address_name] = 'NO ADDRESS NAME'
   end
 
   # Grabs to who donation and via who (if applicable)
-  temporary[:to] = html_doc.xpath('//tr/td')[0].children[1].text.strip
+  temporary_hash[:to] = html_doc.xpath('//tr/td')[0].children[1].text.strip
   # The via part
+  via = false # Used to determine the proper numbers for the donation part
   if html_doc.xpath('//tr/td')[0].children.to_s.include? '<b>via</b>'
-    temporary[:via] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+    temporary_hash[:via] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+    via = true
   else
-    temporary[:via] = 'NO VIA'
+    temporary_hash[:via] = 'NO VIA'
+    via = false
   end
 
+  # Retrieves the donation date, amount, and id
+  transaction_array = Array.new
+  transaction_hash = Hash.new
+  if via == true
+    transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[3].to_s
+    transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[4].to_s
+    transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[2].to_s
+  else
+    transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[1].to_s
+    transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[2].to_s
+    transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+  end
+  transaction_array.push(transaction_hash)
+  temporary_hash[:donation] = transaction_array
+
+  # Removes the unneeded code in order to make the :to and :via part easier to extract
   5.times do
     html_doc.xpath('//tr/td')[0].remove
   end
 
   a += 1
-  $hash_array.push(temporary)
+  $hash_array.push(temporary_hash)
 
 end
 
