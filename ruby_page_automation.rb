@@ -163,9 +163,10 @@ elsif numberey == 1
 end
 PAGE_FILE_OUT = '../../Documents/page_file_out.html' # Used for outputting the submitted form page
 FILE_OUT = '../../Documents/fec_dot_gov.txt' # Route from the script folder
-TEST_FILE_OUT = '../..//Documents/test.txt' # Used for testing
+TEST_FILE_OUT = '../../Documents/test.txt' # Used for testing
 
 $contribution_type = 'No Contribution Yet'
+$hash_array = Array.new
 
 agent = Mechanize.new
 page  = agent.get('http://www.fec.gov/finance/disclosure/norindsea.shtml')
@@ -194,28 +195,43 @@ elsif html_doc.css('font/text()')[0].to_s == 'non-federal receipts "exempt from 
 end
 #puts html_doc.css('font')
 
-# Grabs the name
-if (html_doc.xpath('//body/b/text()')[1].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[1].to_s.include? "#{LNAME}")
-  temporary[:name] = html_doc.xpath('//body/b/text()')[1].to_s
-end
-puts html_doc.xpath('//body/b/text()')
+a = 0
+while (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[a].to_s.include? "#{LNAME}")
+  temporary = Hash.new
+  # Grabs the name
+  if (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_doc.xpath('/body/b/text()')[a].to_s.include? "#{LNAME}")
+    temporary[:name] = html_doc.xpath('//body/b/text()')[a].to_s
+  end
 
-# Grabs the address
-# EX: CITY, ST #####
-address = html_doc.css('br')[8].next.text.strip
-temporary[:address] = address
+  # Grabs the address
+  # EX: CITY, ST #####
+  address = html_doc.xpath('//body/b')[a].next.next.text.strip
+  temporary[:address] = address
 
-# Grabs address name
-address_name = html_doc.css('br')[9].next.text.strip
-temporary[:address_name] = address_name
+  # Grabs address name
+  if (html_doc.xpath('//body/b')[a].next.next.next.next.text.strip == '') == false
+    address_name = html_doc.xpath('//body/b')[a].next.next.next.next.text.strip
+    temporary[:address_name] = address_name
+  else
+    temporary[:address_name] = 'NO ADDRESS NAME'
+  end
 
-# Grabs to who donation and via who (if applicable)
-temporary[:to] = html_doc.xpath('//tr/td/a/text()')[0].to_s
-# The via part
-if html_doc.xpath('//tr/td')[0].children.to_s.include? '<b>via</b>'
-  temporary[:via] = html_doc.xpath('//tr/td/a/text()')[1].to_s
-else
-  temporary[:via] = 'NO VIA'
+  # Grabs to who donation and via who (if applicable)
+  temporary[:to] = html_doc.xpath('//tr/td')[0].children[1].text.strip
+  # The via part
+  if html_doc.xpath('//tr/td')[0].children.to_s.include? '<b>via</b>'
+    temporary[:via] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+  else
+    temporary[:via] = 'NO VIA'
+  end
+
+  5.times do
+    html_doc.xpath('//tr/td')[0].remove
+  end
+
+  a += 1
+  $hash_array.push(temporary)
+
 end
 
 #puts temporary
@@ -226,12 +242,10 @@ output_file.puts(html_doc)
 output_file.close
 =end
 
-=begin
 # Outputs the result
-output_file = File.new(file_out, 'w+')
-output_file.puts(hash_array)
+output_file = File.new(FILE_OUT, 'w+')
+output_file.puts($hash_array)
 output_file.close
-=end
 
 # Outputs test result
 output_file = File.new(TEST_FILE_OUT, 'w+')
