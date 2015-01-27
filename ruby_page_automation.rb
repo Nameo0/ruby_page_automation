@@ -6,7 +6,7 @@ gem 'nokogiri',   '1.6.5'
 require 'mechanize'
 require 'nokogiri'
 
-numberey = 0
+numberey = 1
 if numberey == 0
   FNAME = 'hillary'
   LNAME = 'clinton'
@@ -66,7 +66,7 @@ while (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_d
   temporary_hash[:address] = address
 
   # Grabs address name
-  if (html_doc.xpath('//body/b')[a].next.next.next.next.text.strip == '') == false
+  if !(html_doc.xpath('//body/b')[a].next.next.next.next.text.strip == '')
     address_name = html_doc.xpath('//body/b')[a].next.next.next.next.text.strip
     temporary_hash[:address_name] = address_name
   else
@@ -74,7 +74,8 @@ while (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_d
   end
 
   # Grabs to who donation and via who (if applicable)
-  temporary_hash[:to] = html_doc.xpath('//tr/td')[0].children[1].text.strip
+  puts html_doc.xpath('//tr/td')[0].children[1].text.strip
+  temporary_hash[:to] = html_doc.xpath('//tr/td')[0].children[1].text.strip # used for testing
   # The via part
   via_exist = false # Used to determine the proper numbers for the donation part
   if html_doc.xpath('//tr/td')[0].children.to_s.include? '<b>via</b>'
@@ -88,14 +89,23 @@ while (html_doc.xpath('//body/b/text()')[a].to_s.include? "#{FNAME}") || (html_d
   # Retrieves the donation date, amount, and id
   transaction_array = Array.new
   transaction_hash = Hash.new
+  b = 0
   if via_exist == true
-    transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[3].to_s
-    transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[4].to_s
-    transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[2].to_s
+    # Loops until all donations for instance recorded
+    #while html_doc.xpath('//table')[a].children[b * 5].nil? == false
+      transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[3].to_s
+      transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[4].to_s
+      transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[2].to_s
+      b += 1
+    #end
   else
-    transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[1].to_s
-    transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[2].to_s
-    transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+    # Loops until all donations for instance recorded
+    #while html_doc.xpath('//table')[a].children[b * 5].nil? == false
+      transaction_hash[:date] = html_doc.xpath('//tr/td/text()')[1].to_s
+      transaction_hash[:amount] = html_doc.xpath('//tr/td/text()')[2].to_s
+      transaction_hash[:donate_id] = html_doc.xpath('//tr/td/a/text()')[1].to_s
+      b += 1
+    #end
   end
   transaction_array.push(transaction_hash)
   temporary_hash[:donation] = transaction_array
@@ -123,7 +133,11 @@ output_file = File.new(FILE_OUT, 'w+')
 output_file.puts($hash_array)
 output_file.close
 
+#puts $hash_array[0][:type]
+
 # Outputs test result
+=begin
 output_file = File.new(TEST_FILE_OUT, 'w+')
 output_file.puts(html_doc)
 output_file.close
+=end
